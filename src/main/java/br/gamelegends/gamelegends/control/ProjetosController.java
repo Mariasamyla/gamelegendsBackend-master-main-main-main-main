@@ -41,17 +41,6 @@ public class ProjetosController {
         return ResponseEntity.ok(projetosService.findAll());
     }
 
-    // GET: Retorna um projeto específico por ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Projetos> getProjetoById(@PathVariable Long id) {
-        Optional<Projetos> projeto = projetosRepository.findById(id);
-        if (projeto.isPresent()) {
-            return ResponseEntity.ok(projeto.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     // GET: Retorna o binário da foto do projeto por ID (byte[])
     @GetMapping("/{id}/foto")
     public ResponseEntity<byte[]> getFotoProjeto(@PathVariable Long id) {
@@ -59,12 +48,27 @@ public class ProjetosController {
         if (projetoOpt.isPresent() && projetoOpt.get().getFoto() != null) {
             byte[] imagem = projetoOpt.get().getFoto();
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_JPEG); // ou MediaType.IMAGE_PNG se for o caso
+            headers.setContentType(MediaType.IMAGE_JPEG);
             return new ResponseEntity<byte[]>(imagem, headers, HttpStatus.OK);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // GET: Retorna um projeto específico por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Projetos> getProjetoById(@PathVariable Long id) {
+        System.out.println("Buscando projeto com ID: " + id);
+        Optional<Projetos> projeto = projetosRepository.findById(id);
+        if (projeto.isPresent()) {
+            System.out.println("Projeto encontrado: " + projeto.get().getNomeProjeto());
+            return ResponseEntity.ok(projeto.get());
+        } else {
+            System.out.println("Projeto não encontrado com ID: " + id);
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     // POST: Cria um projeto com ou sem foto (campo correto: foto)
     @PostMapping("/createComFoto")
