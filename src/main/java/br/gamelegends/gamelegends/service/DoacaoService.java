@@ -40,4 +40,15 @@ public class DoacaoService {
     public void delete(Long id) {
         doacaoRepository.deleteById(id);
     }
+
+    public String gerarCodigoPix(long valor) {
+        // Simulação de geração de código PIX
+        // Em um sistema real, aqui seria integrado com um provedor de pagamento
+        String chavePix = "gamelegends@pix.com.br";
+        String valorFormatado = String.format("%.2f", valor / 100.0);
+        
+        // Código PIX simulado (normalmente seria gerado por uma API de pagamento)
+        return String.format("00020126580014br.gov.bcb.pix0136%s0204%s5303986540%s5802BR5913Game Legends6009SAO PAULO62070503***6304", 
+                chavePix, "DOA" + System.currentTimeMillis(), valorFormatado.length() + valorFormatado);
+    }
 }

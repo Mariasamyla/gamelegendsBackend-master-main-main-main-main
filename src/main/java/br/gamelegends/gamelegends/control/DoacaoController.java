@@ -68,4 +68,36 @@ public class DoacaoController {
         doacaoService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    // ROTA POST - Gerar PIX para doação
+    @PostMapping("/pix")
+    public ResponseEntity<Object> gerarPix(@RequestBody Doacao doacao) {
+        try {
+            String pixCode = doacaoService.gerarCodigoPix(doacao.getValor());
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new PixResponse(pixCode, "PIX gerado com sucesso"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao gerar PIX: " + e.getMessage());
+        }
+    }
+
+    // Classe interna para resposta do PIX
+    public static class PixResponse {
+        private String pixCode;
+        private String message;
+
+        public PixResponse(String pixCode, String message) {
+            this.pixCode = pixCode;
+            this.message = message;
+        }
+
+        public String getPixCode() {
+            return pixCode;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
 }
