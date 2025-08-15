@@ -1,7 +1,7 @@
 package br.gamelegends.gamelegends.control;
 
-import java.awt.PageAttributes.MediaType;
-import java.net.http.HttpHeaders;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import java.util.List;
 import java.util.Optional;
 
