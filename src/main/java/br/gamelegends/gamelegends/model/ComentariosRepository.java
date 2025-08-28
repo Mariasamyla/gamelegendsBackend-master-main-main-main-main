@@ -1,0 +1,11 @@
+package br.gamelegends.gamelegends.model;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ComentariosRepository extends JpaRepository<Comentarios, Long> {
+    List<Comentarios> findByNomeJogo(String nomeJogo);
+}
