@@ -69,6 +69,45 @@ public class RedefinirSenhaService {
         return codigo;
     }
 
+    @Transactional
+    public String gerarCodigoVerificacaoReal(String email) {
+        // Verificar se é um email real
+        if (!isEmailRealProvider(email)) {
+            throw new RuntimeException("Email deve ser de um provedor real (Gmail, Yahoo, etc.)");
+        }
+        
+        // Gerar código de 6 dígitos
+        String codigo = String.format("%06d", new Random().nextInt(1000000));
+        
+        // Limpar códigos antigos do email
+        codigoRepository.deleteByEmail(email);
+        
+        // Criar novo código com expiração de 10 minutos
+        CodigoVerificacao codigoVerificacao = new CodigoVerificacao(
+            email, 
+            codigo, 
+            LocalDateTime.now().plusMinutes(10)
+        );
+        
+        codigoRepository.save(codigoVerificacao);
+        
+        // Log do código gerado
+        System.out.println("📧 Código " + codigo + " gerado para email REAL: " + email + " (ID: " + codigoVerificacao.getId() + ")");
+        
+        // Enviar email real obrigatoriamente
+        try {
+            emailService.enviarCodigoVerificacao(email, codigo);
+            System.out.println("✅ Email enviado com sucesso para: " + email);
+        } catch (Exception e) {
+            System.err.println("❌ Erro ao enviar email para: " + email + " - " + e.getMessage());
+            // Remove o código do banco se falhar o envio
+            codigoRepository.delete(codigoVerificacao);
+            throw new RuntimeException("Falha ao enviar email. Tente novamente.");
+        }
+        
+        return codigo;
+    }
+
     public boolean verificarCodigo(String email, String codigo) {
         System.out.println("🔍 Verificando se código " + codigo + " pertence ao email: " + email);
         

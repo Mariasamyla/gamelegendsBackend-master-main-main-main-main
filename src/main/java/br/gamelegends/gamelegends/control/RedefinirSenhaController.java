@@ -28,10 +28,23 @@ public class RedefinirSenhaController {
             String email = request.get("email");
             String codigo = redefinirSenhaService.gerarCodigoVerificacao(email);
             
-            // Aqui você pode integrar com um serviço de email real
-            // Por enquanto, retornamos o código para teste
             return ResponseEntity.ok(Map.of(
-                "message", "Código enviado com sucesso"
+                "message", "Código salvo no banco para email cadastrado"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body(new MessageResponse("Erro: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/enviar-codigo-real")
+    public ResponseEntity<?> enviarCodigoReal(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String codigo = redefinirSenhaService.gerarCodigoVerificacaoReal(email);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Código enviado para email real e salvo no banco"
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
